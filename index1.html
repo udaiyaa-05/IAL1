@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Industrial AI Application Lab · ML1709 · Experiments 1–10</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d2e;--line:#26364d;--text:#e7eef8;--muted:#a8b7ca;--accent:#65d6c4;--code:#070d16;}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:34px 18px 26px;background:#101b2b;border-bottom:1px solid var(--line)}.wrap{max-width:1000px;margin:auto}.eyebrow{color:var(--accent);font-size:.82rem;letter-spacing:.12em;font-weight:700}h1{font-size:clamp(2rem,5vw,3rem);margin:8px 0}header p,.muted{color:var(--muted)}
+nav{position:sticky;top:0;z-index:5;background:#0d1726;border-bottom:1px solid var(--line);padding:12px max(16px,calc((100% - 1000px)/2));display:flex;gap:8px;flex-wrap:wrap}nav a{color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:7px;padding:4px 9px;font-size:.9rem}nav a:hover{background:#1a2b40}
+main{max-width:1000px;margin:22px auto;padding:0 16px}.intro,.experiment{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin:18px 0}.experiment{scroll-margin-top:100px}h2{font-size:1.45rem;margin:4px 0 18px}h3{color:var(--accent);font-size:1.03rem;margin:22px 0 7px}h4{margin:15px 0 4px}p{margin:7px 0}li{padding:3px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--code);border:1px solid var(--line);border-radius:9px;padding:14px;overflow-x:auto;color:#d7e8ff;font: .9rem/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}code{font-family:inherit}.output{border-left:4px solid var(--accent);background:#102a2a;padding:12px 15px;border-radius:0 8px 8px 0}.warning{color:#ffd28a}footer{text-align:center;color:var(--muted);padding:30px 15px;border-top:1px solid var(--line)}@media(max-width:600px){.intro,.experiment{padding:16px}nav{position:static}}
+</style></head><body>
+<header><div class="wrap"><div class="eyebrow">ML1709 · DEPARTMENT OF AML</div><h1>Industrial AI Application Lab</h1><p>Complete single-page reference · Experiments 1–10 · Aim, procedure, dependencies, run commands, code, expected output, result and notes</p></div></header>
+<nav aria-label="Experiment navigation"><a href="#experiment-1">Ex. 1</a> <a href="#experiment-2">Ex. 2</a> <a href="#experiment-3">Ex. 3</a> <a href="#experiment-4">Ex. 4</a> <a href="#experiment-5">Ex. 5</a> <a href="#experiment-6">Ex. 6</a> <a href="#experiment-7">Ex. 7</a> <a href="#experiment-8">Ex. 8</a> <a href="#experiment-9">Ex. 9</a> <a href="#experiment-10">Ex. 10</a></nav>
+<main><section class="intro"><h2>Before you start</h2><p>This page contains all ten experiment entries in one HTML document. Use the navigation links above to jump to an experiment, or use your browser's Find feature (Ctrl+F) to search the page.</p><p><strong>Python environment:</strong> Python 3.10 or 3.11 is recommended for compatibility with the listed packages. Create a separate folder for each experiment and use a virtual environment where appropriate:</p><pre><code>python -m venv .venv
+# Linux / macOS
+source .venv/bin/activate
+# Windows PowerShell
+.venv\Scripts\Activate.ps1</code></pre><p class="warning"><strong>Important:</strong> The code blocks are concise study versions and notes identify where a snippet is not a complete training/evaluation run. Install the listed dependencies and provide the required input files before running an experiment.</p><h3>Common setup and verification</h3><p>For Python experiments, use a separate folder and virtual environment per experiment. On Manjaro, install Python and pip with pacman (not apt):</p><pre><code>sudo pacman -Syu
+sudo pacman -S python python-pip
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip</code></pre><p>Then install only that experiment's listed packages and run its script. Save each code block as the filename used in its run command (for example, <code>experiment4.py</code>). Replace that filename if you choose a different one.</p><p><strong>Before practical submission:</strong> test each experiment on the actual lab computer, check that its required media/model/dataset exists, and compare the real terminal/window output with the expected output below. Expected outputs in this guide are descriptions, not proof that the code has been executed on your machine.</p><p class="warning"><strong>Compatibility:</strong> ROS 2 Humble installation commands are Ubuntu-specific; MATLAB is required for Experiment 2's printed program; Docker is required for Experiment 3; Experiments 4–10 use Python packages and may need internet access for model/dataset downloads. No single pip install command installs every dependency for all ten experiments.</p></section>
+<article class="experiment" id="experiment-1">
+      <div class="eyebrow">ML1709 · EXPERIMENT 1</div>
+      <h2>Experiment 1: Create a ROS2 Python Publisher and Subscriber</h2>
+      <h3>Aim</h3><p>Set up a basic ROS2 package with Python nodes and execute them using ROS2 command-line tools.</p>
+      <h3>Procedure</h3><ol><li>Source the ROS2 environment (ROS2 Humble recommended).</li><li>Create an ament_python package named py_pubsub.</li><li>Create a publisher that sends String messages to the topic named topic.</li><li>Create a subscriber callback that listens to the same topic.</li><li>Add package entry points, build with colcon, and run the nodes.</li></ol>
+      <h3>Dependencies and setup</h3>
+      <p><strong>Packages / tools:</strong> ROS2 (Humble recommended), rclpy, std_msgs, colcon</p>
+      <p><strong>Install / setup command:</strong></p><pre><code>sudo apt install ros-humble-ros-base python3-colcon-common-extensions
+source /opt/ros/humble/setup.bash</code></pre>
+      <p><strong>Required files / dataset:</strong> ROS2 workspace, py_pubsub package, and demo_node.py. The full manual uses separate publisher and subscriber Python files.</p>
+      <p>ROS2 is intended for Ubuntu/Linux. Create a workspace and package with ros2 pkg create --build-type ament_python py_pubsub. Add the node and a console-script entry point in setup.py, then build using colcon build --symlink-install. Source install/setup.bash before running. The displayed code is a compact single-node topic demonstration.</p>
+      
+      <h3>Program / Code</h3><pre><code># demo_node.py — compact publisher + subscriber in one ROS2 node
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class DemoNode(Node):
+    def __init__(self):
+        super().__init__(&#x27;minimal_publisher_subscriber&#x27;)
+        self.pub = self.create_publisher(String, &#x27;topic&#x27;, 10)
+        self.sub = self.create_subscription(String, &#x27;topic&#x27;, self.callback, 10)
+        self.count = 0
+        self.timer = self.create_timer(0.5, self.publish_msg)
+
+    def publish_msg(self):
+        msg = String()
+        msg.data = f&#x27;Hello World: {self.count}&#x27;
+        self.pub.publish(msg)
+        self.get_logger().info(f&#x27;Publishing: {msg.data}&#x27;)
+        self.count += 1
+
+    def callback(self, msg):
+        self.get_logger().info(f&#x27;I heard: {msg.data}&#x27;)
+
+rclpy.init()
+node = DemoNode()
+rclpy.spin(node)
+node.destroy_node()
+rclpy.shutdown()
+</code></pre>
+      <h3>How to run</h3><pre><code># Ubuntu with ROS 2 Humble installed and sourced
+source /opt/ros/humble/setup.bash
+# From the ROS 2 workspace root, after creating/configuring the package:
+colcon build --symlink-install
+source install/setup.bash
+# Run the node (from a sourced ROS 2 environment)
+python3 demo_node.py</code></pre><p class="warning">Manjaro is not an officially supported ROS 2 Humble binary target. The apt command above is for Ubuntu only. On Manjaro, use a supported Ubuntu environment/VM or follow the ROS 2 source-build instructions for your exact ROS distribution.</p>
+      <h3>Expected Output</h3><div class="output">The terminal repeatedly displays messages similar to: Publishing: Hello World: 0 and I heard: Hello World: 0, followed by increasing numbers.</div>
+      <h3>Result</h3><p>Thus, a basic ROS2 Python publisher/subscriber node was created, built, and executed using ROS2 command-line tools.</p>
+      <h3>Notes and limitations</h3><p>This compact single-node demonstration combines publishing and subscribing to the same topic. The full manual uses separate publisher_member_function.py and subscriber_member_function.py files with console-script entry points.</p>
+    </article><article class="experiment" id="experiment-2">
+      <div class="eyebrow">ML1709 · EXPERIMENT 2</div>
+      <h2>Experiment 2: RoARM Manipulator / 2-DOF Manipulator Demonstration</h2>
+      <h3>Aim</h3><p>The manual heading describes installing the RoARM Manipulator ROS2 package and launching RViz and joint_state_publisher_gui to control robot joints.</p>
+      <h3>Procedure</h3><ol><li>Review the two link coordinate vectors in the manual&#x27;s program.</li><li>Plot the first link in red.</li><li>Plot the second link in blue, starting at the end of the first link.</li><li>Enable grid, title, and legend to display the two-link manipulator.</li></ol>
+      <h3>Dependencies and setup</h3>
+      <p><strong>Packages / tools:</strong> MATLAB for the program actually printed in the PDF. To implement the title literally, ROS2, the RoARM package, RViz, and joint_state_publisher_gui are required.</p>
+      <p><strong>Install / setup command:</strong></p><pre><code>No Python pip packages are required for the MATLAB plotting program. Run it in MATLAB.</code></pre>
+      <p><strong>Required files / dataset:</strong> No external input file is needed for the MATLAB plot.</p>
+      <p>The PDF heading says RoARM Manipulator ROS2, but its program and result show a MATLAB 2-DOF manipulator plot. This website documents the actual printed program. Confirm with your instructor if the ROS2 RoARM procedure is required.</p>
+      
+      <h3>Program / Code</h3><pre><code>% MATLAB program printed in the supplied lab manual
+X1 = [0, 3];
+Y1 = [0, 3];
+X2 = [3, 5];
+Y2 = [3, 8];
+
+plot(X1, Y1, &#x27;r.-&#x27;);
+hold on;
+plot(X2, Y2, &#x27;b-.&#x27;);
+hold off;
+grid on;
+title(&#x27;Lab 01, 2-DOF Manipulator&#x27;);
+legend(&#x27;Link 1&#x27;, &#x27;Link 2&#x27;);
+</code></pre>
+      <h3>How to run</h3><pre><code># Save the program as experiment2.m, then run it in MATLAB:
+# Open MATLAB, set Current Folder to the file location, and enter:
+experiment2</code></pre><p class="warning">The supplied PDF has a title/program mismatch: this MATLAB plot is what the printed code implements. It does not launch RViz or control a physical RoARM robot.</p>
+      <h3>Expected Output</h3><div class="output">A MATLAB plot of a two-link manipulator: Link 1 runs from (0,0) to (3,3), and Link 2 runs from (3,3) to (5,8), with grid, title, and legend.</div>
+      <h3>Result</h3><p>Thus, the two-link manipulator model using vectors and MATLAB plotting commands was executed and the output was verified successfully, as stated in the manual.</p>
+      <h3>Notes and limitations</h3><p>IMPORTANT: The PDF heading describes a RoARM ROS2/RViz installation, but the actual program and result on pages 6–7 are MATLAB code for a 2-DOF manipulator. This website preserves the printed program instead of inventing missing ROS2 commands.</p>
+    </article><article class="experiment" id="experiment-3">
+      <div class="eyebrow">ML1709 · EXPERIMENT 3</div>
+      <h2>Experiment 3: Create a Web Server Using Docker</h2>
+      <h3>Aim</h3><p>Create a web server using a Docker container, build it, and instantiate the container.</p>
+      <h3>Procedure</h3><ol><li>Write a simple Flask web-server application.</li><li>Create a Dockerfile and requirements.txt.</li><li>Build the Docker image.</li><li>Run the container and open the web server.</li></ol>
+      <h3>Dependencies and setup</h3>
+      <p><strong>Packages / tools:</strong> flask</p>
+      <p><strong>Install / setup command:</strong></p><pre><code>python -m pip install flask</code></pre>
+      <p><strong>Required files / dataset:</strong> app.py, Dockerfile, requirements.txt</p>
+      <p>Docker Desktop or Docker Engine must be installed and running. Build: docker build -t my-web-server .  |  Run: docker run -p 4000:80 my-web-server</p>
+      <h4>Dockerfile</h4><pre><code>FROM python:3.8-slim
+WORKDIR /app
+COPY . /app
+RUN pip install --no-cache-dir -r requirements.txt
+EXPOSE 80
+ENV NAME World
+CMD [&quot;python&quot;, &quot;app.py&quot;]
+</code></pre><h4>requirements.txt</h4><pre><code>Flask
+</code></pre>
+      <h3>Program / Code</h3><pre><code># app.py
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route(&quot;/&quot;)
+def hello_world():
+    return &quot;Hello, World!&quot;
+
+if __name__ == &quot;__main__&quot;:
+    app.run(debug=True, host=&quot;0.0.0.0&quot;, port=80)
+</code></pre>
+      <h3>How to run</h3><pre><code># Keep app.py, Dockerfile and requirements.txt in one folder
+python -m pip install flask
+docker build -t my-web-server .
+docker run --rm -p 4000:80 my-web-server
+# Open http://localhost:4000/ in a browser
+# Stop the container with Ctrl+C</code></pre><p><strong>Platform note:</strong> Docker Engine/Desktop must be installed and running. On Linux, your user may need Docker-group permissions; logging out and back in may be required after changing group membership.</p>
+      <h3>Expected Output</h3><div class="output">Open http://localhost:4000/ after starting the container. The browser should display: Hello, World!</div>
+      <h3>Result</h3><p>Thus, a web server was created using a Docker container, built, and instantiated.</p>
+      <h3>Notes and limitations</h3><p>The lab manual also specifies a Dockerfile based on python:3.8-slim, EXPOSE 80, and CMD [&quot;python&quot;, &quot;app.py&quot;], with Flask listed in requirements.txt.</p>
+    </article><article class="experiment" id="experiment-4">
+      <div class="eyebrow">ML1709 · EXPERIMENT 4</div>
+      <h2>Experiment 4: Image Processing Using OpenCV</h2>
+      <h3>Aim</h3><p>Convert an image to grayscale, apply Gaussian blur, and detect edges using OpenCV in Python.</p>
+      <h3>Procedure</h3><ol><li>Read the input image.</li><li>Convert BGR to grayscale.</li><li>Apply Gaussian blur.</li><li>Detect edges using Canny and display the results.</li></ol>
+      <h3>Dependencies and setup</h3>
+      <p><strong>Packages / tools:</strong> opencv-python, matplotlib, numpy</p>
+      <p><strong>Install / setup command:</strong></p><pre><code>python -m pip install opencv-python matplotlib numpy</code></pre>
+      <p><strong>Required files / dataset:</strong> cat.jpg (place it beside the Python script)</p>
+      <p>Run with Python. The image filename in the code must match the file you provide.</p>
+      
+      <h3>Program / Code</h3><pre><code>import cv2
+import matplotlib.pyplot as plt
+
+img = cv2.imread(&quot;cat.jpg&quot;)
+if img is None:
+    raise FileNotFoundError(&quot;Place cat.jpg beside this script.&quot;)
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+blur = cv2.GaussianBlur(gray, (5, 5), 0)
+edges = cv2.Canny(blur, 50, 150)
+
+titles = [&quot;Original&quot;, &quot;Grayscale&quot;, &quot;Blurred&quot;, &quot;Edges&quot;]
+images = [cv2.cvtColor(img, cv2.COLOR_BGR2RGB), gray, blur, edges]
+cmaps = [None, &quot;gray&quot;, &quot;gray&quot;, &quot;gray&quot;]
+
+fig, axes = plt.subplots(2, 2, figsize=(9, 7))
+for ax, title, image, cmap in zip(axes.flat, titles, images, cmaps):
+    ax.imshow(image, cmap=cmap)
+    ax.set_title(title)
+    ax.axis(&quot;off&quot;)
+plt.tight_layout()
+plt.show()
+</code></pre>
+      <h3>How to run</h3><pre><code># Put cat.jpg in the same directory as the script
+python -m pip install opencv-python matplotlib numpy
+python3 experiment4.py</code></pre><p><strong>Input check:</strong> The filename must match exactly. If the image is missing or unreadable, the script raises FileNotFoundError.</p>
+      <h3>Expected Output</h3><div class="output">A 2×2 display shows the original image, grayscale image, blurred image, and Canny edge map.</div>
+      <h3>Result</h3><p>Thus, grayscale conversion, Gaussian blurring, and edge detection were performed using OpenCV.</p>
+      <h3>Notes and limitations</h3><p>Requires opencv-python and matplotlib. Place an image named cat.jpg in the same folder as the script.</p>
+    </article><article class="experiment" id="experiment-5">
+      <div class="eyebrow">ML1709 · EXPERIMENT 5</div>
+      <h2>Experiment 5: Video Processing Using OpenCV</h2>
+      <h3>Aim</h3><p>Process each frame of a video stream with simple transformations in real time.</p>
+      <h3>Procedure</h3><ol><li>Open the video file.</li><li>Read frames in a loop.</li><li>Convert each frame to grayscale.</li><li>Display processed frames; press q to exit.</li></ol>
+      <h3>Dependencies and setup</h3>
+      <p><strong>Packages / tools:</strong> opencv-python</p>
+      <p><strong>Install / setup command:</strong></p><pre><code>python -m pip install opencv-python</code></pre>
+      <p><strong>Required files / dataset:</strong> Sample.mp4 (place it beside the Python script)</p>
+      <p>Run on a desktop with a display because cv2.imshow() opens a video window. Press q to quit.</p>
+      
+      <h3>Program / Code</h3><pre><code>import cv2
+
+cap = cv2.VideoCapture(&quot;Sample.mp4&quot;)
+if not cap.isOpened():
+    raise FileNotFoundError(&quot;Place Sample.mp4 beside this script.&quot;)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print(&quot;Video Ends&quot;)
+        break
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    cv2.imshow(&quot;Processed Frame&quot;, gray)
+
+    if cv2.waitKey(30) &amp; 0xFF == ord(&quot;q&quot;):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+</code></pre>
+      <h3>How to run</h3><pre><code># Put Sample.mp4 beside the script
+python -m pip install opencv-python
+python3 experiment5.py
+# Press q in the video window to quit</code></pre><p><strong>Platform note:</strong> A desktop session with video-window support is required. In a headless terminal/SSH session, OpenCV's display window may not open.</p>
+      <h3>Expected Output</h3><div class="output">A video window displays the grayscale frames. Press q to stop; the program prints Video Ends when the video finishes.</div>
+      <h3>Result</h3><p>Thus, video frames were processed using OpenCV and a grayscale transformation.</p>
+      <h3>Notes and limitations</h3><p>Requires opencv-python and a video file named Sample.mp4 in the same folder.</p>
+    </article><article class="experiment" id="experiment-6">
+      <div class="eyebrow">ML1709 · EXPERIMENT 6</div>
+      <h2>Experiment 6: Build an Image Classifier and Export to ONNX</h2>
+      <h3>Aim</h3><p>Build and train an image-classification neural network using PyTorch, evaluate it, and export it to ONNX format.</p>
+      <h3>Procedure</h3><ol><li>Load and normalize Fashion-MNIST.</li><li>Define a neural network.</li><li>Train and evaluate the model.</li><li>Export the model to ONNX.</li></ol>
+      <h3>Dependencies and setup</h3>
+      <p><strong>Packages / tools:</strong> torch, torchvision, onnx</p>
+      <p><strong>Install / setup command:</strong></p><pre><code>python -m pip install torch torchvision onnx</code></pre>
+      <p><strong>Required files / dataset:</strong> No manual input file. Fashion-MNIST downloads automatically when the dataset code is run.</p>
+      <p>The short code shown demonstrates model creation and ONNX export. A full training/evaluation run needs the Fashion-MNIST training loop and can take longer. Output file: fashion_mnist.onnx.</p>
+      
+      <h3>Program / Code</h3><pre><code># Short demonstration: defines a model and exports it.
+# The full lab experiment trains and evaluates on Fashion-MNIST.
+import torch
+import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Flatten(),
+    nn.Linear(28 * 28, 128),
+    nn.ReLU(),
+    nn.Linear(128, 10)
+).eval()
+
+dummy_input = torch.randn(1, 1, 28, 28)
+torch.onnx.export(
+    model, dummy_input, &quot;fashion_mnist.onnx&quot;,
+    input_names=[&quot;input&quot;], output_names=[&quot;output&quot;],
+    dynamic_axes={&quot;input&quot;: {0: &quot;batch_size&quot;},
+                  &quot;output&quot;: {0: &quot;batch_size&quot;}}
+)
+print(&quot;Model exported to ONNX.&quot;)
+</code></pre>
+      <h3>How to run</h3><pre><code>python -m pip install torch torchvision onnx
+python3 experiment6.py</code></pre><p><strong>Runtime note:</strong> Fashion-MNIST and any required model/data files may download on first run, so internet access is needed. PyTorch installation differs for CPU and CUDA; use the official PyTorch selector for a CUDA-specific install. The short code shown above only exports the model; it is not a full training-and-accuracy evaluation.</p>
+      <h3>Expected Output</h3><div class="output">A file named fashion_mnist.onnx is created, and the program prints Model exported to ONNX.</div>
+      <h3>Result</h3><p>The lab manual&#x27;s full experiment trains a PyTorch image classifier, evaluates test accuracy, and converts the model to ONNX.</p>
+      <h3>Notes and limitations</h3><p>This compact web example only demonstrates model definition and export; it does not train the Fashion-MNIST classifier or calculate accuracy. The manual&#x27;s full experiment uses Fashion-MNIST.</p>
+    </article><article class="experiment" id="experiment-7">
+      <div class="eyebrow">ML1709 · EXPERIMENT 7</div>
+      <h2>Experiment 7: Speech-to-Text Conversion</h2>
+      <h3>Aim</h3><p>Input a WAV audio file and convert its speech to text using a pretrained Wav2Vec2 model.</p>
+      <h3>Procedure</h3><ol><li>Load a pretrained speech recognition model.</li><li>Load the WAV file.</li><li>Resample audio to 16 kHz if needed.</li><li>Run recognition and print the transcription.</li></ol>
+      <h3>Dependencies and setup</h3>
+      <p><strong>Packages / tools:</strong> torch, transformers, librosa, soundfile</p>
+      <p><strong>Install / setup command:</strong></p><pre><code>python -m pip install torch transformers librosa soundfile</code></pre>
+      <p><strong>Required files / dataset:</strong> harvard.wav (or change the filename in the code)</p>
+      <p>The first run downloads the pretrained facebook/wav2vec2-base-960h model. Use a clear English speech WAV file. Wav2Vec2 is for speech recognition; Word2Vec is a word-embedding method.</p>
+      
+      <h3>Program / Code</h3><pre><code># Install: pip install transformers torch torchaudio
+from transformers import pipeline
+
+recognizer = pipeline(
+    &quot;automatic-speech-recognition&quot;,
+    model=&quot;facebook/wav2vec2-base-960h&quot;
+)
+result = recognizer(&quot;harvard.wav&quot;)
+print(&quot;Transcription:&quot;, result[&quot;text&quot;])
+</code></pre>
+      <h3>How to run</h3><pre><code># Place harvard.wav beside the script
+python -m pip install torch transformers librosa soundfile
+python3 experiment7.py</code></pre><p><strong>Runtime note:</strong> The pretrained Wav2Vec2 model downloads on first run and needs internet access. Use a readable WAV file; mono audio at 16 kHz is the safest input. First inference can take time, especially on CPU.</p>
+      <h3>Expected Output</h3><div class="output">Prints a transcription of the speech contained in harvard.wav. The manual shows an example transcription beginning: THE STALE SMELL OF OLD BEER LINGERS...</div>
+      <h3>Result</h3><p>Thus, speech in a WAV audio file was converted into text using a pretrained Wav2Vec2 model.</p>
+      <h3>Notes and limitations</h3><p>The lab manual&#x27;s title mentions Word2Vec, but the actual program uses Wav2Vec2. This compact version uses a Transformers pipeline; install transformers, torch, and torchaudio and provide harvard.wav.</p>
+    </article><article class="experiment" id="experiment-8">
+      <div class="eyebrow">ML1709 · EXPERIMENT 8</div>
+      <h2>Experiment 8: Transfer Learning Using ResNet18</h2>
+      <h3>Aim</h3><p>Use a pretrained ResNet18 model for CIFAR-10 image classification and evaluate it.</p>
+      <h3>Procedure</h3><ol><li>Load pretrained ResNet18.</li><li>Prepare CIFAR-10 and transforms.</li><li>Replace the final layer with 10 outputs.</li><li>Train the final layer and evaluate test accuracy.</li></ol>
+      <h3>Dependencies and setup</h3>
+      <p><strong>Packages / tools:</strong> torch, torchvision</p>
+      <p><strong>Install / setup command:</strong></p><pre><code>python -m pip install torch torchvision</code></pre>
+      <p><strong>Required files / dataset:</strong> CIFAR-10 downloads automatically; pretrained ResNet18 weights download on first use.</p>
+      <p>The complete experiment needs CIFAR-10 training and test loops. The short snippet is a quick model-adaptation demonstration; it does not guarantee the output label cat unless a suitable trained model and cat image are used.</p>
+      
+      <h3>Program / Code</h3><pre><code># Short demonstration of adapting ResNet18.
+# This snippet does not train or evaluate the model.
+import torch
+import torch.nn as nn
+from torchvision import models
+
+model = models.resnet18(weights=&quot;DEFAULT&quot;)
+for param in model.parameters():
+    param.requires_grad = False
+
+model.fc = nn.Linear(model.fc.in_features, 10)
+model.eval()
+
+with torch.no_grad():
+    sample = torch.randn(1, 3, 224, 224)
+    prediction = model(sample).argmax(dim=1).item()
+
+print(&quot;Predicted class index:&quot;, prediction)
+</code></pre>
+      <h3>How to run</h3><pre><code>python -m pip install torch torchvision
+python3 experiment8.py</code></pre><p><strong>Runtime note:</strong> Pretrained weights and CIFAR-10 may download on first run. The displayed short demonstration does not train the model or guarantee the class "cat"; a meaningful prediction requires a real CIFAR-10 image and a correctly trained/evaluated model. Use a CPU or CUDA-compatible PyTorch build.</p>
+      <h3>Expected Output</h3><div class="output">Prints a predicted class index from 0 to 9 for the random demonstration input. A meaningful CIFAR-10 result requires a real image and training/evaluation.</div>
+      <h3>Result</h3><p>The full lab experiment adapts pretrained ResNet18 for CIFAR-10, trains the final layer, evaluates accuracy, and demonstrates inference.</p>
+      <h3>Notes and limitations</h3><p>The manual&#x27;s example inference predicts cat for its sample image. This shortened example uses random input and therefore does not reproduce that result.</p>
+    </article><article class="experiment" id="experiment-9">
+      <div class="eyebrow">ML1709 · EXPERIMENT 9</div>
+      <h2>Experiment 9: MobileNetV2 Quantization</h2>
+      <h3>Aim</h3><p>Perform quantization on MobileNetV2 using the FBGEMM quantization method and evaluate the model.</p>
+      <h3>Procedure</h3><ol><li>Load a pretrained MobileNetV2 model.</li><li>Set a quantization configuration.</li><li>Prepare and calibrate the model.</li><li>Convert it to a quantized model and evaluate it.</li></ol>
+      <h3>Dependencies and setup</h3>
+      <p><strong>Packages / tools:</strong> torch, torchvision</p>
+      <p><strong>Install / setup command:</strong></p><pre><code>python -m pip install torch torchvision</code></pre>
+      <p><strong>Required files / dataset:</strong> No manual input file for a random-input demonstration. Full evaluation uses a dataset/DataLoader.</p>
+      <p>Use a CPU build with FBGEMM support. PyTorch quantization APIs and torchvision model support vary by version; the full experiment must calibrate the prepared model before converting it to INT8.</p>
+      
+      <h3>Program / Code</h3><pre><code># Compact demonstration; exact layer fusion and quantization
+# support can vary with the installed PyTorch/torchvision version.
+import torch
+from torchvision.models import mobilenet_v2, MobileNet_V2_QuantizedWeights
+
+model = mobilenet_v2(weights=None).eval()
+model.qconfig = torch.ao.quantization.get_default_qconfig(&quot;fbgemm&quot;)
+
+prepared = torch.ao.quantization.prepare(model, inplace=False)
+with torch.no_grad():
+    prepared(torch.randn(1, 3, 224, 224))  # calibration
+quantized = torch.ao.quantization.convert(prepared, inplace=False)
+
+print(&quot;Quantized model created.&quot;)
+</code></pre>
+      <h3>How to run</h3><pre><code>python -m pip install torch torchvision
+python3 experiment9.py</code></pre><p><strong>Runtime note:</strong> This is a PyTorch static-quantization demonstration. The FBGEMM backend is primarily intended for x86 CPU builds; check availability with <code>torch.backends.quantized.supported_engines</code>. Operator support and quantization APIs vary by PyTorch/torchvision version. The snippet is not a full accuracy benchmark.</p>
+      <h3>Expected Output</h3><div class="output">If supported by the installed PyTorch version and model operators, the program prints Quantized model created.</div>
+      <h3>Result</h3><p>The full lab experiment compares FP32 and INT8 model accuracy after calibration and quantization.</p>
+      <h3>Notes and limitations</h3><p>Quantization APIs and supported operators vary across PyTorch versions; the lab manual&#x27;s exact fusion code may need adjustment for the installed torchvision model. This compact snippet does not calculate accuracy.</p>
+    </article><article class="experiment" id="experiment-10">
+      <div class="eyebrow">ML1709 · EXPERIMENT 10</div>
+      <h2>Experiment 10: L1 Structured Pruning on ResNet18</h2>
+      <h3>Aim</h3><p>Apply L1 structured pruning to convolutional layers in ResNet18 and evaluate the pruned model.</p>
+      <h3>Procedure</h3><ol><li>Load pretrained ResNet18.</li><li>Apply L1-norm structured pruning to convolution filters.</li><li>Remove pruning reparameterizations.</li><li>Evaluate the pruned model and optionally fine-tune.</li></ol>
+      <h3>Dependencies and setup</h3>
+      <p><strong>Packages / tools:</strong> torch, torchvision</p>
+      <p><strong>Install / setup command:</strong></p><pre><code>python -m pip install torch torchvision</code></pre>
+      <p><strong>Required files / dataset:</strong> Pretrained ResNet18 weights download on first use. Full accuracy evaluation uses CIFAR-10, which downloads automatically.</p>
+      <p>The short snippet demonstrates pruning. For measured test accuracy, add a CIFAR-10 test DataLoader and evaluate the pruned model. Use the same device for model and input tensors.</p>
+      
+      <h3>Program / Code</h3><pre><code>import torch
+import torch.nn.utils.prune as prune
+from torchvision.models import resnet18, ResNet18_Weights
+
+model = resnet18(weights=ResNet18_Weights.DEFAULT)
+
+for module in model.modules():
+    if isinstance(module, torch.nn.Conv2d):
+        prune.ln_structured(
+            module, name=&quot;weight&quot;, amount=0.3, n=1, dim=0
+        )
+        prune.remove(module, &quot;weight&quot;)
+
+print(&quot;L1 structured pruning completed.&quot;)
+</code></pre>
+      <h3>How to run</h3><pre><code>python -m pip install torch torchvision
+python3 experiment10.py</code></pre><p><strong>Runtime note:</strong> Pretrained weights download on first run. The shown snippet demonstrates structured pruning; it does not prove a speedup or report test accuracy. To measure accuracy, add a consistent evaluation DataLoader and move both model and batches to the same device (CPU or CUDA).</p>
+      <h3>Expected Output</h3><div class="output">Prints L1 structured pruning completed. This confirms that the pruning operations ran; it is not an accuracy measurement.</div>
+      <h3>Result</h3><p>The full lab experiment applies 30% structured pruning to convolutional layers and evaluates the pruned ResNet18 on CIFAR-10.</p>
+      <h3>Notes and limitations</h3><p>The manual&#x27;s evaluation code uses CUDA tensors directly and has device/dataloader omissions in the extracted text. This compact version demonstrates pruning only; it does not evaluate accuracy.</p>
+    </article></main><footer>Industrial AI Application Lab · ML1709 · Experiments 1–10</footer></body></html>
