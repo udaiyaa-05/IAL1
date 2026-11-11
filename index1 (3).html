@@ -1,0 +1,1345 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="ML1709 Industrial AI Application Lab experiments 1 to 10, with selectable aims, procedures, code and results."><title>ML1709 Industrial AI Application Lab</title><style>*{box-sizing:border-box}body{margin:0;background:#0b1220;color:#e8eef8;font:16px/1.65 system-ui,Arial,sans-serif}header{padding:28px 18px;background:#111d2d;border-bottom:1px solid #2a3b52}header,main{max-width:1100px;margin:auto}h1{margin:0;font-size:clamp(1.7rem,4vw,2.5rem)}header p{margin:6px 0 0;color:#aab9cc}nav{position:sticky;top:0;z-index:5;background:#0e1928;padding:12px max(14px,calc((100% - 1064px)/2));display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid #2a3b52}nav a{color:#75e3ce;text-decoration:none;border:1px solid #31445d;border-radius:7px;padding:5px 9px;font-size:.9rem}main{padding:18px}.toolbar{position:sticky;top:58px;background:#0b1220;padding:8px 0;z-index:4}input{width:100%;padding:12px;border-radius:8px;border:1px solid #31445d;background:#142235;color:#fff;font:inherit}.experiment{background:#121f30;border:1px solid #2a3b52;border-radius:12px;padding:20px;margin:20px 0;scroll-margin-top:120px}.experiment[hidden]{display:none}.exphead{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;border-bottom:1px solid #31445d;padding-bottom:12px;margin-bottom:18px}.exphead h2{margin:0;color:#75e3ce;font-size:1.3rem}.exphead p{margin:4px 0 0;font-weight:650}.field{margin:18px 0}.field h3{font-size:1rem;color:#75e3ce;margin:0 0 8px;text-transform:uppercase;letter-spacing:.06em}pre.content{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text;font:15px/1.75 ui-monospace,SFMono-Regular,Consolas,monospace;color:#e4ebf5;background:#0c1726;border:1px solid #263a52;border-radius:8px;padding:14px}.empty{color:#9eacc0;font-style:italic}button{background:#1b3045;color:#75e3ce;border:1px solid #31445d;border-radius:7px;padding:8px 11px;cursor:pointer;font:inherit}footer{text-align:center;color:#9eacc0;padding:25px}@media(max-width:650px){nav{position:static}.toolbar{top:0}.experiment{padding:13px}.exphead{flex-direction:column}pre.content{font-size:13px;padding:10px}}</style></head><body><header><h1>ML1709 – Industrial AI Application Lab</h1><p>Experiments 1–10 · One page · Selectable and copyable text</p></header><nav aria-label="Experiment navigation"><p>Jump to experiment:</p><a href="#exp-1">Experiment 1</a><a href="#exp-2">Experiment 2</a><a href="#exp-3">Experiment 3</a><a href="#exp-4">Experiment 4</a><a href="#exp-5">Experiment 5</a><a href="#exp-6">Experiment 6</a><a href="#exp-7">Experiment 7</a><a href="#exp-8">Experiment 8</a><a href="#exp-9">Experiment 9</a><a href="#exp-10">Experiment 10</a></nav><main><div class="toolbar"><input id="search" type="search" placeholder="Search experiments…" aria-label="Search experiments"></div><section class="experiment" id="exp-1"><div class="exphead"><div><h2>Experiment 1</h2><p>Setup a basic ROS2 Package with a Node in python and execute it using ROS2 Command line tools</p></div><button onclick="copyExperiment(1)">Copy experiment</button></div><div class="field"><h3>Aim</h3><pre class="content">To setup a basic ROS2 Package with a Node in python and execute it using ROS2 Command
+line tools.</pre></div><div class="field"><h3>Algorithm / Procedure and Code</h3><pre class="content">1. Install ROS 2 Jazzy
+
+         Update the Ubuntu package lists and install the required packages.
+                 sudo apt update
+                 sudo apt upgrade -y
+         Install required packages:
+                 sudo apt install software-properties-common curl -y
+         Enable the Ubuntu Universe repository:
+                 sudo add-apt-repository universe
+         Install the ROS 2 repository key:
+                 sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key
+\-o /usr/share/keyrings/ros-archive-keyring.gpg
+         Add the ROS 2 repository:
+echo &quot;deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-
+keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release &amp;&amp; echo
+$UBUNTU_CODENAME) main&quot; | sudo tee /etc/apt/sources.list.d/ros2.list &gt; /dev/null
+         Update the package lists:
+                 sudo apt update
+         Install ROS 2 Jazzy Desktop:
+                 sudo apt install ros-jazzy-desktop -y
+         Install ROS 2 development tools:
+                 sudo apt install ros-dev-tools -y
+2. Source the ROS 2 Environment
+         Every new terminal must source the ROS 2 environment before using ROS 2
+commands.
+                 source /opt/ros/jazzy/setup.bash
+
+       ROS 2 can also be tested using the demo talker:
+               ros2 run demo_nodes_cpp talker
+3. Create a ROS 2 Workspace
+       Create a workspace and source directory:
+               mkdir -p ~/ros2_ws/src
+               cd ~/ros2_ws/src
+4. Create the Python Package
+       Create a Python package named py_pubsub using the ament_python build type:
+               ros2 pkg create --build-type ament_python --license Apache-2.0 py_pubsub
+       Navigate to the package:
+               cd ~/ros2_ws/src/py_pubsub
+5. Create the Publisher Node
+       Create the publisher file:
+               cd ~/ros2_ws/src/py_pubsub/py_pubsub
+               touch publisher_member_function.py
+               nano publisher_member_function.py
+       Add the following code:
+                       publisher_member_function.py
+                       import rclpy
+                       from rclpy.node import Node
+                       from std_msgs.msg import String
+                       class MinimalPublisher(Node):
+                              def     init   (self):
+                                       super(). init (&#x27;minimal_publisher&#x27;)
+                                       self.publisher_ = self.create_publisher(
+                                                String,
+                                                &#x27;topic&#x27;,
+                                       )
+                                       timer_period = 0.5 # seconds
+                                       self.timer = self.create_timer(
+                                                 timer_period,
+                                                self.timer_callback
+
+                                       )
+                                       self.i = 0
+                         def timer_callback(self):
+                                       msg = String()
+                                       msg.data = &#x27;Hello World: %d&#x27; % self.i
+                                       self.publisher_.publish(msg)
+                                       self.get_logger().info(
+                                                &#x27;Publishing: &quot;%s&quot;&#x27; % msg.data
+                                       )
+                                       self.i += 1
+                       def main(args=None):
+                              rclpy.init(args=args)
+                              minimal_publisher = MinimalPublisher()
+                              rclpy.spin(minimal_publisher)
+                              minimal_publisher.destroy_node()
+                              rclpy.shutdown()
+                       if name        == &#x27; main &#x27;:
+                              main()
+6. Create the Subscriber Node
+       Create the subscriber file:
+               touch subscriber_listener_function.py
+               nano subscriber_listener_function.py
+       Add the following code:
+               subscriber_listener_function.py
+                       import rclpy
+                       from rclpy.node import Node
+                       from std_msgs.msg import String
+                       class MinimalSubscriber(Node):
+                              def     init   (self):
+                                       super(). init (&#x27;minimal_subscriber&#x27;)
+                                       self.subscription = self.create_subscription(
+                                                String,
+                                                &#x27;topic&#x27;,
+
+                                                 self.listener_callback, 10)
+                                         self.subscription
+                                         def listener_callback(self, msg):
+                                         self.get_logger().info(
+                                                 &#x27;I heard: &quot;%s&quot;&#x27; % msg.data
+                                )
+                       def main(args=None):
+                                rclpy.init(args=args)
+                                minimal_subscriber = MinimalSubscriber()
+                                rclpy.spin(minimal_subscriber)
+                                minimal_subscriber.destroy_node()
+                                rclpy.shutdown()
+                       if name         == &#x27; main &#x27;:
+                                main()
+7. Configure setup.py
+       Open the setup.py file:
+               cd ~/ros2_ws/src/py_pubsub
+               nano setup.py
+       Replace its contents with:
+               setup.py
+                       from setuptools import find_packages, setup
+                       package_name = &#x27;py_pubsub&#x27;
+                       setup(
+                          name=package_name,
+                          version=&#x27;0.0.0&#x27;,
+                          packages=find_packages(exclude=[&#x27;test&#x27;]),
+                          data_files=[
+                                (
+                                     &#x27;share/ament_index/resource_index/packages&#x27;,
+                                     [&#x27;resource/&#x27; + package_name]
+                                ),
+                                (
+                                     &#x27;share/&#x27; + package_name,
+
+                                        [&#x27;package.xml&#x27;]
+                                   ),
+                              ],
+                              install_requires=[&#x27;setuptools&#x27;],
+                              zip_safe=True,
+                              maintainer=&#x27;aml&#x27;,
+                              maintainer_email=&#x27;aml@todo.todo&#x27;,
+                              description=&#x27;ROS 2 Python publisher and subscriber package&#x27;,
+                              license=&#x27;Apache-2.0&#x27;,
+                              extras_require={
+                                   &#x27;test&#x27;: [
+                                        &#x27;pytest&#x27;,
+                                   ],
+                              },
+                              entry_points={
+                                   &#x27;console_scripts&#x27;: [
+                                        &#x27;talker = py_pubsub.publisher_member_function:main&#x27;,
+                                        &#x27;listener = py_pubsub.subscriber_listener_function:main&#x27;,
+                                   ],
+                              },
+                          )
+       The console_scripts section creates the ROS 2 commands:
+       talker
+       listener
+8. Configure setup.cfg
+       Create or edit the setup.cfg file:
+                  cd ~/ros2_ws/src/py_pubsub
+                  nano setup.cfg
+       Add:
+                  [develop]
+                  script_dir=$base/lib/py_pubsub
+                  [install]
+                  install_scripts=$base/lib/py_pubsub
+
+10. Build the ROS 2 Package
+        Navigate to the workspace:
+                 cd ~/ros2_ws
+        Build the package using colcon:
+                 colcon build --packages-select py_pubsub
+        After successful compilation, source the workspace:
+                 source install/setup.bash
+11. Run the Publisher Node
+        Open Terminal 1 and source ROS 2:
+                 source /opt/ros/jazzy/setup.bash
+                 source ~/ros2_ws/install/setup.bash
+        Run the publisher:
+                 ros2 run py_pubsub talker
+12. Run the Subscriber Node
+        Open Terminal 2 and source the ROS 2 environment:
+                 source /opt/ros/jazzy/setup.bash
+                 source ~/ros2_ws/install/setup.bash
+        Run the subscriber:
+                 ros2 run py_pubsub listener
+13. Add an entry point
+entry_points={
+&#x27;console_scripts&#x27;: [
+&#x27;talker = py_pubsub.publisher_member_function:main&#x27;,
+&#x27;listener = py_pubsub.subscriber_member_function:main&#x27;],},
+14. Build and run
+colcon build --merge-install --packages-select py_pubsub</pre></div><div class="field"><h3>Result</h3><pre class="content">To setup a basic ROS2 Package with a Node in python and execute it using ROS2 Command
+line tools was verified successfully.</pre></div></section><section class="experiment" id="exp-2"><div class="exphead"><div><h2>Experiment 2</h2><p>Installation of RoARM Manipulator ROS2 Package and Control of Robot Joints using RViz and Joint State Publisher GUI</p></div><button onclick="copyExperiment(2)">Copy experiment</button></div><div class="field"><h3>Aim</h3><pre class="content">To install the RoARM Manipulator ROS2 package and visualize and control the robot joints
+using RViz2 and the Joint State Publisher GUI.</pre></div><div class="field"><h3>Algorithm / Procedure and Code</h3><pre class="content">1. Check the ROS 2 installation
+           Open the terminal and verify the ROS 2 installation.
+                    source /opt/ros/jazzy/setup.bash
+                    ros2 --help
+           2. Install the required ROS 2 packages
+                    sudo apt update
+                    sudo apt install -y ros-jazzy-rviz2 ros-jazzy-joint-state-publisher ros-
+jazzy-joint-state-publisher-gui ros-jazzy-robot-state-publisher ros-jazzy-xacro python3-
+colcon-common-extensions git
+           3. Create the RoARM workspace
+                    mkdir -p ~/Documents/testingXp2/roarm_ws/src
+                    cd ~/Documents/testingXp2/roarm_ws
+           4. Download the RoARM ROS2 package
+                    cd ~/Documents/testingXp2/roarm_ws/src
+                    git clone -b ros2-humble https://github.com/waveshareteam/roarm_ws.git
+roarm_source
+           5. Source ROS 2 Jazzy
+                    cd ~/Documents/testingXp2/roarm_ws
+                    source /opt/ros/jazzy/setup.bash
+           6. Build the required RoARM packages
+           The complete RoARM repository contains additional MoveIt and IKFast packages
+that are not required for basic RViz visualization and joint control.
+           Build the required packages:
+
+                    colcon build --symlink-install --packages-select roarm_description
+roarm_msgs roarm_driver roarm_moveit
+
+          7. Source the workspace
+
+          After successful compilation, source the workspace:
+                   source install/setup.bash
+          8. Verify the RoARM packages
+                   ros2 pkg list | grep roarm
+          9. Select the RoARM model
+          The RoARM description package contains RoARM M2 and RoARM M3 models.
+          For the RoARM M2 model, set:
+                   export ROARM_MODEL=roarm_m2
+          10. Launch the RoARM visualization
+          Launch the RoARM description:
+                   ros2 launch roarm_description display.launch.py</pre></div><div class="field"><h3>Result</h3><pre class="content">The RoARM Manipulator ROS2 package was successfully built and launched on Ubuntu
+24.04 with ROS 2 Jazzy. The RoARM manipulator was visualized in RViz2, and its joints
+were controlled using the Joint State Publisher GUI.</pre></div></section><section class="experiment" id="exp-3"><div class="exphead"><div><h2>Experiment 3</h2><p>Create a web-server using docker container, build it and instatiate the container</p></div><button onclick="copyExperiment(3)">Copy experiment</button></div><div class="field"><h3>Aim</h3><pre class="content">To create a web-server using docker container, build it and instatiate the container.</pre></div><div class="field"><h3>Algorithm / Procedure and Code</h3><pre class="content">Step1: Write a Simple Web Server Application
+
+ Step2: Create a Dockerfile
+
+ Step3: Build the Docker Image
+
+ Step4: Run the Docker Container
+
+ Step5: Access the Web Server
+
+ Program:
+
+ # Use an official Python runtime as a base image
+
+ FROM python:3.8-slim
+
+ # Set the working directory in the container
+
+ WORKDIR /app
+
+ # Copy the current directory contents into the container at /app
+
+ COPY . /app
+
+ # Install any needed packages specified in requirements.txt
+
+ RUN pip install --no-cache-dir -r requirements.txt
+
+ # Make port 80 available to the world outside this container
+
+ EXPOSE 80
+
+ # Define environment variable
+
+ ENV NAME World
+
+ # Run app.py when the container launches
+
+ CMD [&quot;python&quot;, &quot;app.py&quot;]
+
+ 4. Save and close the Dockerfile.
+
+ 5. Create a new file called requirements.txt in the project directory. This file will list the Python
+ packages needed for your web server.
+
+6. Open the requirements.txt file in a text editor and add the following line to it:
+
+Flask
+
+7. Save and close the requirements.txt file.
+
+8. Create a new file called app.py in the project directory. This file will contain the code for your web
+server.
+
+9. Open the app.py file in a text editor and add the following lines to it:
+
+from flask import Flask
+
+app = Flask( name )
+
+@app.route(&#x27;/&#x27;)
+
+def hello_world():
+
+  return &#x27;Hello, World!&#x27;
+
+if name      == &#x27; main &#x27;:
+
+  app.run(debug=True, host=&#x27;0.0.0.0&#x27;)
+
+10. Save and close the app.py file.
+
+11. Open a terminal and navigate to the project directory.
+
+12. Build the Docker image using the following command:
+
+docker build -t my-web-server .
+
+This will create a new Docker image named &quot;my-web-server&quot; based on the Dockerfile you created
+earlier.
+
+13. Run the Docker container using the following command:
+
+docker run -p 4000:80 my-web-server
+
+This will start the web server in a new Docker container, and it will be accessible at
+http://localhost:4000/.</pre></div><div class="field"><h3>Result</h3><pre class="content">Thus the to create a web-server using docker container, build it and instatiate the container was
+verified successfully.</pre></div></section><section class="experiment" id="exp-4"><div class="exphead"><div><h2>Experiment 4</h2><p>Perform image processing operations such as converting to grayscale, blurring, and edge detection using OpenCV in Python</p></div><button onclick="copyExperiment(4)">Copy experiment</button></div><div class="field"><h3>Aim</h3><pre class="content">The aim of this experiment is to perform basic image processing operations such as converting
+           an image to grayscale, applying blurring, and detecting edges using OpenCV in Python.</pre></div><div class="field"><h3>Algorithm / Procedure and Code</h3><pre class="content">Step1: Import OpenCV, NumPy, and Matplotlib for image processing and display.
+
+Step2: cv2.imread() to read the input image.
+
+Step3: cv2.cvtColor() to convert the image from BGR to grayscale.
+
+Step4: cv2.GaussianBlur() to apply a Gaussian blur to the grayscale image.
+
+Step5: cv2.Canny() to detect edges in the blurred image.
+
+Step6: Display the original, grayscale, blurred, and edge-detected images using cv2.imshow() or
+matplotlib.
+
+Program:
+
+pip3 install opencv-python
+
+pip3 install matplotlib
+
+#Import required packages
+
+import cv2
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+img_color = cv2.imread(&#x27;cat.jpg&#x27;)
+
+if img_color is None:
+
+  print(&quot;Error loading image&quot;)
+
+  exit()
+
+In [5]:
+
+#Converting the image to Grayscale
+
+img_gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
+
+In [6]:
+
+#Applying Gaussian Blur
+
+kernel_size = 5 # Choose an odd integer value (e.g., 3, 5, 7)
+
+img_blur = cv2.GaussianBlur(img_gray, (kernel_size, kernel_size), 0)
+
+In [7]:
+
+#Perform Canny Edge detection
+
+threshold1 = 50
+
+threshold2 = 150
+
+edges = cv2.Canny(img_blur, threshold1, threshold2)
+
+#Display the processed images using matplotlib
+
+fig, axs = plt.subplots(2, 2, figsize=(10, 10))
+
+# Original image (RGB)
+
+axs[0, 0].imshow(cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB))
+
+axs[0, 0].set_title(&#x27;Original Image&#x27;)
+
+axs[0, 0].axis(&#x27;off&#x27;)
+
+# Grayscale image
+
+axs[0, 1].imshow(img_gray, cmap=&#x27;gray&#x27;)
+
+axs[0, 1].set_title(&#x27;Grayscale Image&#x27;)
+
+axs[0, 1].axis(&#x27;off&#x27;)
+
+# Blurred image
+
+axs[1, 0].imshow(img_blur, cmap=&#x27;gray&#x27;)
+
+axs[1, 0].set_title(f&#x27;Blurred Image (Kernel {kernel_size}x{kernel_size})&#x27;)
+
+axs[1, 0].axis(&#x27;off&#x27;)
+
+# Edge detection image
+
+axs[1, 1].imshow(edges, cmap=&#x27;gray&#x27;)
+
+axs[1, 1].set_title(f&#x27;Edge Detection ({threshold1}-{threshold2})&#x27;)
+
+axs[1, 1].axis(&#x27;off&#x27;)
+
+plt.show()
+
+Output</pre></div><div class="field"><h3>Result</h3><pre class="content">Thus, the Python program to perform image processing operations such as converting to grayscale,
+blurring, and edge detection using OpenCV was verified successfully.</pre></div></section><section class="experiment" id="exp-5"><div class="exphead"><div><h2>Experiment 5</h2><p>Perform video processing operations using OpenCV and apply simple filters or transformations to each frame of the video stream</p></div><button onclick="copyExperiment(5)">Copy experiment</button></div><div class="field"><h3>Aim</h3><pre class="content">To perform video processing operations using OpenCV and apply simple filters or transformations to
+each frame of the video stream, such as grayscale conversion, blurring, and edge detection, in real-
+time.</pre></div><div class="field"><h3>Algorithm / Procedure and Code</h3><pre class="content">Step1: Initialize Video Capture
+
+Step2: Read Frames in a Loop.
+
+Step3: Apply Image Processing Operations.
+
+Step4: Display the Processed Frame
+
+Step5: Exit the Video Stream
+
+Program :
+
+import cv2
+
+import numpy as np
+
+In [28]:
+
+# Function to apply various transformations to the frame
+
+def transform_frame(frame):
+
+  # Convert the frame to HSV (Hue, Saturation, Value) color space
+
+  hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+  # Apply a color transformation by adjusting the Hue channel
+
+  # Here we shift the hue slightly towards blue
+
+  hsv_frame[:, :, 0] += 15 # Increase Hue by 15
+
+  # Convert back to BGR for display
+
+  transformed_frame = cv2.cvtColor(hsv_frame, cv2.COLOR_HSV2BGR)
+
+  # Apply a Gaussian blur to the frame
+
+  blurred_frame = cv2.GaussianBlur(transformed_frame, (15, 15), 0)
+
+  # Detect edges in the frame using the Canny edge detector
+
+  edge_frame = cv2.Canny(blurred_frame, threshold1=30, threshold2=150)
+
+  return edge_frame #Change this to visualize each effects
+
+In [29]:
+
+cap = cv2.VideoCapture(&#x27;Sample.mp4&#x27;)
+
+if not cap.isOpened():
+
+  print(&quot;Error: Could not open video.&quot;)
+
+  exit()
+
+In [30]:
+
+frame_rate = 30 # Desired frame rate in frames per second
+
+delay = int(1000 / frame_rate) # Convert frame rate to delay time in milliseconds
+
+while True:
+
+  # Read the next frame from the video
+
+  ret, frame = cap.read()
+
+  # Check if the frame was successfully read; if not, break the loop
+
+  if not ret:
+
+     print(&quot;Video Ends&quot;)
+
+     break
+
+   try:
+
+     # Process the frame using a defined transform_frame function
+
+     processed_frame = transform_frame(frame) # Replace with your actual processing logic
+
+    # Display the processed frame in a window named &#x27;Processed Frame&#x27;
+
+    cv2.imshow(&#x27;Processed Frame&#x27;, processed_frame)
+
+           except Exception as e:
+
+     print(f&quot;Error during frame transformation: {e}&quot;)
+
+     break
+
+   key = cv2.waitKey(delay) &amp; 0xFF
+
+  if key == ord(&#x27;q&#x27;):
+
+     break
+
+Video Ends
+
+In [31]:
+
+cap.release()
+
+cv2.destroyAllWindows()</pre></div><div class="field"><h3>Result</h3><pre class="content">Thus, the Python program to perform video processing operations using OpenCV and apply simple
+filters or transformations to each frame of the video stream was verified successfully.</pre></div></section><section class="experiment" id="exp-6"><div class="exphead"><div><h2>Experiment 6</h2><p>Build a Multi layer perceptron using Pytorch framework and train a model to perform image classification, convert the model into ONNX (Open-Neural Network) format</p></div><button onclick="copyExperiment(6)">Copy experiment</button></div><div class="field"><h3>Aim</h3><pre class="content">To write a python code to build a Multi layer perceptron using Pytorch framework and train a model
+to perform image classification, convert the model into ONNX (Open-Neural Network) format.</pre></div><div class="field"><h3>Algorithm / Procedure and Code</h3><pre class="content">Step1: Data Preparation.
+
+Step2: Define the MLP Model
+
+Step3: Training the Model
+
+Step4 Evaluate the Model
+
+Step5: Convert the Model to ONNX Format
+
+Program:
+
+import torch
+
+import torch.nn as nn
+
+import torch.optim as optim
+
+import torchvision
+
+import torchvision.transforms as transforms
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+In [3]:
+
+device = torch.device(&#x27;cuda&#x27; if torch.cuda.is_available() else &#x27;cpu&#x27;)
+
+In [4]:
+
+transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
+
+In [5]:
+
+train_dataset = torchvision.datasets.FashionMNIST(root=&#x27;./data&#x27;,                train=True,      download=True,
+transform=transform)
+
+test_dataset = torchvision.datasets.FashionMNIST(root=&#x27;./data&#x27;, train=False, download=True,
+
+train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=64, shuffle=True)
+
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=8, shuffle=False)
+
+In [7]:
+
+classes = [&#x27;T-shirt/top&#x27;, &#x27;Trouser&#x27;, &#x27;Pullover&#x27;, &#x27;Dress&#x27;, &#x27;Coat&#x27;, &#x27;Sandal&#x27;, &#x27;Shirt&#x27;, &#x27;Sneaker&#x27;, &#x27;Bag&#x27;, &#x27;Ankle boot&#x27;]
+
+In [58]:
+
+def imshow(img):
+
+  img = img / 2 + 0.5 #unnormalize
+
+  npimg = img.numpy()
+
+  plt.imshow(np.transpose(npimg, (1, 2, 0)))
+
+  plt.show()
+
+In [24]:
+
+dataiter = iter(train_loader)
+
+images, labels = next(dataiter)
+
+In [25]:
+
+imshow(torchvision.utils.make_grid(images))
+
+print(&#x27; &#x27;.join(&#x27;%5s&#x27; % classes[labels[j]] for j in range(8)))
+
+class FashionCNN(nn.Module):
+
+  def      init (self):
+
+     super(FashionCNN, self). init ()
+
+     self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1)
+
+     self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
+
+     self.pool = nn.MaxPool2d(2, 2)
+
+     self.fc1 = nn.Linear(64 * 7 * 7, 128)
+
+     self.fc2 = nn.Linear(128, 10)
+
+     self.relu = nn.ReLU()
+
+     self.dropout = nn.Dropout(0.25)
+
+  def forward(self, x):
+
+     x = self.pool(self.relu(self.conv1(x)))
+
+     x = self.pool(self.relu(self.conv2(x)))
+
+     x = x.view(-1, 64 * 7 * 7) #flatten the tensor
+
+     x = self.relu(self.fc1(x))
+
+     x = self.dropout(x)
+
+     x = self.fc2(x)
+
+     return x
+
+In [15]:
+
+model = FashionCNN().to(device)
+
+criterion = nn.CrossEntropyLoss()
+
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+num_epochs = 5
+
+for epoch in range(num_epochs):
+
+  running_loss = 0.0
+
+  for i, (images, labels) in enumerate(train_loader):
+
+     images, labels = images.to(device), labels.to(device)
+
+     # Zero the parameter gradients
+
+     optimizer.zero_grad()
+
+     # Forward pass
+
+     outputs = model(images)
+
+     loss = criterion(outputs, labels)
+
+     # Backward pass and optimize
+
+     loss.backward()
+
+     optimizer.step()
+
+     running_loss += loss.item()
+
+     if i % 100 == 99: # Print every 100 batches
+
+       print(f&#x27;Epoch     [{epoch+1}/{num_epochs}],           Step     [{i+1}/{len(train_loader)}],   Loss:
+{running_loss/100:.4f}&#x27;)
+
+        running_loss = 0.0
+
+print(&#x27;Finished Training&#x27;)
+
+dataiter = iter(test_loader)
+
+images, labels = next(dataiter)
+
+imshow(torchvision.utils.make_grid(images))
+
+print(&#x27;GroundTruth: &#x27;, &#x27; &#x27;.join(&#x27;%5s&#x27; % classes[labels[j]] for j in range(8)))
+
+imshow(torchvision.utils.make_grid(images))
+
+with torch.no_grad():
+
+  images = images.to(device)
+
+  outputs = model(images)
+
+  _, predicted = torch.max(outputs, 1)
+
+  print(&#x27;Predicted: &#x27;, &#x27; &#x27;.join(&#x27;%5s&#x27; % classes[predicted[j]] for j in range(8)))
+
+model.eval()
+
+correct = 0
+
+total = 0
+
+with torch.no_grad():
+
+  for images, labels in test_loader:
+
+     images, labels = images.to(device), labels.to(device)
+
+     outputs = model(images)
+
+     _, predicted = torch.max(outputs, 1)
+
+     total += labels.size(0)
+
+     correct += (predicted == labels).sum().item()
+
+print(f&#x27;Accuracy of the model on the 10,000 test images: {100 * correct / total:.2f}%&#x27;)
+
+import torch.onnx
+
+dummy_input = torch.randn(1, 1, 28, 28).to(device) #dummy just for conversion
+
+torch.onnx.export(model,
+
+           dummy_input,
+
+           &quot;fashion_mnist.onnx&quot;,
+
+           export_params=True,
+
+           opset_version=11,
+
+           do_constant_folding=True,
+
+           input_names=[&#x27;input&#x27;],
+
+           output_names=[&#x27;output&#x27;],
+
+           dynamic_axes={&#x27;input&#x27;: {0: &#x27;batch_size&#x27;}, &#x27;output&#x27;: {0: &#x27;batch_size&#x27;}}) #Dynamic batch sizes
+
+print(&quot;Model has been successfully converted to ONNX format.&quot;)
+
+import onnxruntime as ort
+
+import numpy as np
+
+# Load the ONNX model
+
+ort_session = ort.InferenceSession(&quot;fashion_mnist.onnx&quot;)
+
+# Function to preprocess input images (similar to PyTorch&#x27;s transforms)
+
+def preprocess(image):
+
+  image = image / 2 + 0.5 # Unnormalize if necessary
+
+  image = np.array(image) # Convert to NumPy array
+
+  image = np.expand_dims(image, axis=0) # Add batch dimension
+
+  return image.astype(np.float32)
+
+# Get a batch of images and labels for inference
+
+dataiter = iter(test_loader)
+
+images, labels = next(dataiter)
+
+# Preprocess the input (ONNX requires NumPy input)
+
+images_np = preprocess(images[0]) #Adjust for different image than first
+
+# Run the ONNX model
+
+ort_inputs = {&#x27;input&#x27;: images_np}
+
+ort_outs = ort_session.run(None, ort_inputs)
+
+predicted_class = np.argmax(ort_outs[0], axis=1)
+
+print(predicted_class)
+
+classes = [&#x27;T-shirt/top&#x27;, &#x27;Trouser&#x27;, &#x27;Pullover&#x27;, &#x27;Dress&#x27;, &#x27;Coat&#x27;, &#x27;Sandal&#x27;, &#x27;Shirt&#x27;, &#x27;Sneaker&#x27;, &#x27;Bag&#x27;, &#x27;Ankle boot&#x27;]</pre></div><div class="field"><h3>Result</h3><pre class="content">Thus the python code to build a Multi layer perceptron using Pytorch framework and train a model to
+perform image classification, convert the model into ONNX (Open-Neural Network) format was
+verified successfully.</pre></div></section><section class="experiment" id="exp-7"><div class="exphead"><div><h2>Experiment 7</h2><p>Perform Speech to Text conversion using Word2Vec and pytorch framework and input a .wav audio file to convert to text data</p></div><button onclick="copyExperiment(7)">Copy experiment</button></div><div class="field"><h3>Aim</h3><pre class="content">To perform Speech to Text conversion using Word2Vec and pytorch framework and input a .wav
+audio file to convert to text data.</pre></div><div class="field"><h3>Algorithm / Procedure and Code</h3><pre class="content">Step1: Preprocess the Audio Data
+
+Step2: Build/Load the Speech Recognition Model
+
+Step3: Train the Model (or Load Pre-trained Model)
+
+Step4: Feed the Processed Audio to the Model
+
+Step5: Post-process and Output the Text
+
+Program:
+
+pip install transformers torch torchaudio
+
+import torch
+
+import torchaudio
+
+from transformers import Wav2Vec2ForCTC, Wav2Vec2Tokenizer
+
+In [5]:
+
+# Load pre-trained Wav2Vec2.0 model and tokenizer from Hugging Face
+
+tokenizer = Wav2Vec2Tokenizer.from_pretrained(&quot;facebook/wav2vec2-base-960h&quot;)
+
+model = Wav2Vec2ForCTC.from_pretrained(&quot;facebook/wav2vec2-base-960h&quot;)
+
+# Load and preprocess the audio file
+
+def load_audio(file_path):
+
+  waveform, sample_rate = torchaudio.load(file_path)
+
+  return waveform, sample_rate
+
+# Preprocess the waveform
+
+def preprocess_audio(waveform, sample_rate):
+
+  # If sample rate is not 16kHz, resample it
+
+  if sample_rate != 16000:
+
+     transform = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=16000)
+
+     waveform = transform(waveform)
+
+  return waveform
+
+In [7]:
+
+# Convert audio to text using the Wav2Vec2.0 model
+
+def speech_to_text(wav_file):
+
+  waveform, sample_rate = load_audio(wav_file)
+
+  waveform = preprocess_audio(waveform, sample_rate)
+
+  # Tokenize and feed to model
+
+  inputs = tokenizer(waveform.squeeze().numpy(), return_tensors=&quot;pt&quot;, padding=True)
+
+  with torch.no_grad():
+
+     logits = model(inputs.input_values).logits
+
+  # Decode the output logits into text
+
+  predicted_ids = torch.argmax(logits, dim=-1)
+
+  transcription = tokenizer.decode(predicted_ids[0])
+
+  return transcription
+
+In [8]:
+
+# Provide the path to your WAV file
+
+wav_file = &#x27;harvard.wav&#x27;
+
+transcription = speech_to_text(wav_file)
+
+print(f&quot;Transcription: {transcription}&quot;)</pre></div><div class="field"><h3>Output</h3><pre class="content">Transcription: THE STALE SMELL OF OLD BEER LINGERS IT TAKES HEAT TO BRING OUT
+THE ODOR A COLD DIP RESTORES HEALTH AND ZEST A SALT PICKLE TASTES FINE
+WITH HAM TAKOZ AL PASTORE ARE MY FAVORITE A ZESTFUL FOOD IS THE HOT
+CROSS BUN</pre></div><div class="field"><h3>Result</h3><pre class="content">Thus, the Python program to perform Speech to Text conversion using Word2Vec and pytorch
+framework and input a .wav audio file to convert to text data was verified successful</pre></div></section><section class="experiment" id="exp-8"><div class="exphead"><div><h2>Experiment 8</h2><p>Perform Transfer Learning using Pytorch framework on ResNet18 pertained model to fit CIFAR-10 dataset and evaluate the model</p></div><button onclick="copyExperiment(8)">Copy experiment</button></div><div class="field"><h3>Aim</h3><pre class="content">To perform Transfer Learning using Pytorch framework on ResNet18 pertained model to fit CIFAR-
+ 10 dataset and evaluate the model.</pre></div><div class="field"><h3>Algorithm / Procedure and Code</h3><pre class="content">Step1: Load Pretrained ResNet18 Model
+
+ Step2: Prepare the CIFAR-10 Dataset
+
+ Step3: Freeze Pretrained Layers (Optional)
+
+ Step4: Train the Model
+
+ Step5: Evaluate the Model
+
+ Program:
+
+ pip install torch torchvision numpy matplotlib
+
+ import torch
+
+ import torch.nn as nn
+
+ import torch.optim as optim
+
+ import torchvision
+
+ import torchvision.transforms as transforms
+
+ from torchvision import models
+
+ from torch.utils.data import DataLoader
+
+ import numpy as np
+
+ import matplotlib.pyplot as plt
+
+ transform = transforms.Compose([
+
+   transforms.Resize(224), # ResNet models expect 224x224 inputs
+
+   transforms.RandomHorizontalFlip(),
+
+   transforms.ToTensor(),
+
+   transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+# Load training and test sets
+
+train_set = torchvision.datasets.CIFAR10(root=&#x27;./data&#x27;, train=True,
+
+                                download=True, transform=transform)
+
+train_loader = DataLoader(train_set, batch_size=64, shuffle=True)
+
+test_set = torchvision.datasets.CIFAR10(root=&#x27;./data&#x27;, train=False,
+
+                               download=True, transform=transform)
+
+test_loader = DataLoader(test_set, batch_size=64, shuffle=False)
+
+classes = (&#x27;plane&#x27;, &#x27;car&#x27;, &#x27;bird&#x27;, &#x27;cat&#x27;, &#x27;deer&#x27;,
+
+          &#x27;dog&#x27;, &#x27;frog&#x27;, &#x27;horse&#x27;, &#x27;ship&#x27;, &#x27;truck&#x27;)
+
+# Load the pre-trained ResNet18 model
+
+model = models.resnet18(pretrained=True)
+
+# Freeze the model&#x27;s parameters so they don&#x27;t get updated during backprop
+
+for param in model.parameters():
+
+   param.requires_grad = False
+
+# Replace the fully connected layer to match CIFAR-10 classes
+
+num_ftrs = model.fc.in_features
+
+model.fc = nn.Linear(num_ftrs, 10) # CIFAR-10 has 10 classes
+
+In [7]:
+
+criterion = nn.CrossEntropyLoss() # Loss function
+
+optimizer = optim.Adam(model.fc.parameters(), lr=0.001) # Only updating the final layer
+
+In [8]:
+
+device = torch.device(&#x27;cuda&#x27; if torch.cuda.is_available() else &#x27;cpu&#x27;)
+
+model.to(device)
+
+num_epochs = 5
+
+for epoch in range(num_epochs):
+
+  running_loss = 0.0
+
+  model.train()
+
+  for i, data in enumerate(train_loader, 0):
+
+     inputs, labels = data
+
+     inputs, labels = inputs.to(device), labels.to(device)
+
+     # Zero the parameter gradients
+
+     optimizer.zero_grad()
+
+     # Forward + backward + optimize
+
+     outputs = model(inputs)
+
+     loss = criterion(outputs, labels)
+
+     loss.backward()
+
+     optimizer.step()
+
+     running_loss += loss.item()
+
+     if i % 100 == 99: # Print every 100 batches
+
+          print(f&quot;[{epoch + 1}, {i + 1}] loss: {running_loss / 100:.3f}&quot;)
+
+          running_loss = 0.0
+
+print(&#x27;Finished Training&#x27;)
+
+Evaluation
+
+In [9]:
+
+correct = 0
+
+total = 0
+
+model.eval()
+
+with torch.no_grad():
+
+  for data in test_loader:
+
+     images, labels = data
+
+     images, labels = images.to(device), labels.to(device)
+
+     outputs = model(images)
+
+     _, predicted = torch.max(outputs.data, 1)
+
+     total += labels.size(0)
+
+     correct += (predicted == labels).sum().item()
+
+print(f&#x27;Accuracy of the network on the 10000 test images: {100 * correct / total} %&#x27;)
+
+torch.save(model.state_dict(), &#x27;resnet18_cifar10.pth&#x27;)
+
+Inference
+
+In [12]:
+
+num_ftrs = model.fc.in_features
+
+model.fc = nn.Linear(num_ftrs, 10)
+
+# Load the saved model weights
+
+model.load_state_dict(torch.load(&#x27;resnet18_cifar10.pth&#x27;))
+
+# Set the model to evaluation mode
+
+model.eval()
+
+from PIL import Image
+
+transform = transforms.Compose([
+
+  transforms.Resize(224),
+
+  transforms.ToTensor(),
+
+  transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)) ])
+
+# Load a sample image (assuming it&#x27;s in PIL format)
+
+img = Image.open(&#x27;goldcat.jpg&#x27;)
+
+# Preprocess the image
+
+img = transform(img)
+
+# Add batch dimension (N=1)
+
+img = img.unsqueeze(0)
+
+In [15]:
+
+# Check if GPU is available and move model to device
+
+device = torch.device(&#x27;cuda&#x27; if torch.cuda.is_available() else &#x27;cpu&#x27;)
+
+model = model.to(device)
+
+# Move the image to the device
+
+img = img.to(device)
+
+# Perform inference
+
+with torch.no_grad():
+
+   outputs = model(img)
+
+# Get the predicted class
+
+_, predicted_class = torch.max(outputs, 1)
+
+# Map the class index to the class name (CIFAR-10 classes)
+
+classes = [&#x27;plane&#x27;, &#x27;car&#x27;, &#x27;bird&#x27;, &#x27;cat&#x27;, &#x27;deer&#x27;, &#x27;dog&#x27;, &#x27;frog&#x27;, &#x27;horse&#x27;, &#x27;ship&#x27;, &#x27;truck&#x27;]
+
+print(f&#x27;Predicted class: {classes[predicted_class.item()]}&#x27;)</pre></div><div class="field"><h3>Output</h3><pre class="content">Predicted class: cat</pre></div><div class="field"><h3>Result</h3><pre class="content">Thus, the Python program to perform Transfer Learning using Pytorch framework on ResNet18
+pertained model to fit CIFAR-10 dataset and evaluate the model was verified successfully.</pre></div></section><section class="experiment" id="exp-9"><div class="exphead"><div><h2>Experiment 9</h2><p>Perform Quantization on MobileNet V2 Model using fbgemm quantization method using Pytorch framework and evaluate</p></div><button onclick="copyExperiment(9)">Copy experiment</button></div><div class="field"><h3>Aim</h3><pre class="content">To perform Quantization on MobileNet V2 Model using fbgemm quantization method using Pytorch
+framework and evaluate.Components</pre></div><div class="field"><h3>Algorithm / Procedure and Code</h3><pre class="content">Step 1: Load the pretrained MobileNetV2 model.
+
+  Step 2: Set up the model for quantization by fusing layers and preparing it for quantization-aware
+training using FBGEMM.
+
+ Step 3: Fine-tune the model (optional) to mitigate the accuracy loss due to quantization.
+
+ Step 4: Convert the model to a quantized version.
+
+ Step 5: Evaluate the quantized model’s performance.
+
+Program:
+
+import torch
+
+print(torch.backends.quantized.supported_engines) #Check for fpgemm
+
+import torch
+
+from torch import nn
+
+from torchvision.models import mobilenet_v2
+
+from torchvision import datasets, transforms
+
+from torch.utils.data import DataLoader
+
+# Step 1: Load a pre-trained MobileNetV2 model
+
+model_fp32 = mobilenet_v2(pretrained=True)
+
+model_fp32.eval()
+
+# Step 2: Prepare the data (e.g., ImageNet or a similar dataset)
+
+transform = transforms.Compose([
+
+  transforms.Resize(256),
+
+  transforms.CenterCrop(224),
+
+  transforms.ToTensor(),
+
+  transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]) ])
+
+# Using a sample dataset (CIFAR-10 in this case, but replace with your dataset)
+
+dataset = datasets.CIFAR10(root=&#x27;./data&#x27;, train=False, download=True, transform=transform)
+
+dataloader = DataLoader(dataset, batch_size=32, shuffle=False)
+
+# Step 3: Fuse appropriate layers for MobileNetV2
+
+# MobileNetV2 has depthwise separable convolutions, so we only need to fuse the first conv and batch
+norm layers
+
+model_fp32_fused = model_fp32
+
+for module_name, module in model_fp32_fused.named_children():
+
+  if module_name == &quot;features&quot;:
+
+     for idx, m in module.named_children():
+
+       if isinstance(m, nn.Conv2d):
+
+          # Fuse Conv2d + BatchNorm2d + ReLU in each block (if applicable)
+
+         torch.quantization.fuse_modules(model_fp32_fused.features[int(idx)], [&#x27;0&#x27;, &#x27;1&#x27;, &#x27;2&#x27;],
+inplace=True)
+
+# Step 4: Specify quantization configuration
+
+# Use fbgemm backend for x86 architectures
+
+model_fp32_fused.qconfig = torch.quantization.get_default_qconfig(&#x27;fbgemm&#x27;)
+
+# Step 5: Prepare the model for static quantization
+
+# This inserts observers in the model that will collect statistics
+
+model_int8_prepared = torch.quantization.prepare(model_fp32_fused)
+
+# Step 6: Calibrate the model by running inference
+
+# Here, we pass the data through the model so that it can learn activation ranges
+
+with torch.no_grad():
+
+  for images, _ in dataloader:
+
+     model_int8_prepared(images)
+
+# Step 7: Convert to a quantized model
+
+model_int8 = torch.quantization.convert(model_int8_prepared)
+
+# Step 8: Evaluate the quantized model
+
+def evaluate(model, dataloader):
+
+  correct = 0
+
+  total = 0
+
+  model.eval()
+
+  with torch.no_grad():
+
+    for images, labels in dataloader:
+
+          outputs = model(images)
+
+          _, predicted = torch.max(outputs, 1)
+
+          total += labels.size(0)
+
+          correct += (predicted == labels).sum().item()
+
+  print(f&#x27;Accuracy of the model: {100 * correct / total:.2f}%&#x27;)
+
+# Evaluate both the original FP32 model and the quantized model
+
+print(&quot;Evaluating FP32 Model...&quot;)
+
+evaluate(model_fp32, dataloader)
+
+print(&quot;Evaluating INT8 Quantized Model...&quot;)
+
+evaluate(model_int8, dataloader)</pre></div><div class="field"><h3>Result</h3><pre class="content">Thus, the Python program to perform Quantization on MobileNet V2 Model using fbgemm
+quantization method using Pytorch framework and evaluate.Components was verified successfully.</pre></div></section><section class="experiment" id="exp-10"><div class="exphead"><div><h2>Experiment 10</h2><p>Perform L1 structured Pruning on ResNet18 model using pytorch framework and evaluate</p></div><button onclick="copyExperiment(10)">Copy experiment</button></div><div class="field"><h3>Aim</h3><pre class="content">.    To perform L1 structured Pruning on ResNet18 model using pytorch framework and evaluate.</pre></div><div class="field"><h3>Algorithm / Procedure and Code</h3><pre class="content">Step1: Load Pre-trained ResNet18
+
+Step2: Define L1 Pruning on Convolutional Layers
+
+Step3: Remove Pruning Masks
+
+Step4: Evaluate the Pruned Model
+
+Step5: Fine-tune the Pruned Model
+
+Programme:
+
+import torch
+
+import torch.nn as nn
+
+import torch.nn.utils.prune as prune
+
+import torchvision.models as models
+
+import torchvision.transforms as transforms
+
+import torchvision.datasets as datasets
+
+from torch.utils.data import DataLoader
+
+import torch.optim as optim
+
+import torch.nn.functional as F
+
+In [2]:
+
+# 1. Load the pre-trained ResNet-18 model
+
+model = models.resnet18(pretrained=True)
+
+# 2. Function to apply L1 structured pruning
+
+def l1_structured_pruning(model, amount):
+
+  for name, module in model.named_modules():
+
+       if isinstance(module, nn.Conv2d):
+
+          # Apply L1-norm structured pruning on Conv2d layers
+
+          prune.ln_structured(module, name=&quot;weight&quot;, amount=amount, n=1, dim=0)
+
+In [4]:
+
+# 3. Prune 30% of filters in the convolutional layers
+
+l1_structured_pruning(model, amount=0.3)
+
+In [5]:
+
+# 4. Prepare the CIFAR-10 dataset and DataLoader for evaluation
+
+transform = transforms.Compose([
+
+     transforms.Resize(224),
+
+     transforms.ToTensor(),
+
+     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+
+])
+
+# Load CIFAR-10 validation dataset
+
+test_dataset = datasets.CIFAR10(root=&#x27;./data&#x27;, train=False, download=True, transform=transform)
+
+In [7]:
+
+# 5. Evaluation function to test the pruned model on CIFAR-10
+
+def evaluate(model, dataloader):
+
+     model.eval()
+
+     correct = 0
+
+     total = 0
+
+     with torch.no_grad():
+
+       for inputs, labels in dataloader:
+
+          inputs, labels = inputs.cuda(), labels.cuda()
+
+          outputs = model(inputs)
+
+          _, predicted = torch.max(outputs.data, 1)
+
+          total += labels.size(0)
+
+          correct += (predicted == labels).sum().item()
+
+  accuracy = 100 * correct / total
+
+  return accuracy
+
+# 6. Move the model to GPU for evaluation (if available)
+
+device = torch.device(&quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;)
+
+model = model.to(device)
+
+In [9]:
+
+# 7. Evaluate the pruned model
+
+accuracy = evaluate(model, test_loader)
+
+print(f&#x27;Accuracy of the pruned ResNet-18 model on CIFAR-10 test images: {accuracy:.2f}%&#x27;)</pre></div><div class="field"><h3>Result</h3><pre class="content">Thus the to perform L1 structured Pruning on ResNet18 model using pytorch framework and the output
+was verified successfully.</pre></div></section></main><footer>ML1709 · Industrial AI Application Lab</footer><script>function copyExperiment(n){const el=document.getElementById("exp-"+n);const text=el.innerText;navigator.clipboard.writeText(text).then(()=>alert("Experiment "+n+" copied"));}const search=document.getElementById("search");search.addEventListener("input",()=>{const q=search.value.toLowerCase();document.querySelectorAll(".experiment").forEach(e=>e.hidden=!e.innerText.toLowerCase().includes(q));});</script></body></html>
